@@ -1,0 +1,40 @@
+﻿<Window x:Class="DPINT_Wk3_Observer.ArrivalsMonitor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DPINT_Wk3_Observer"
+        mc:Ignorable="d"
+        Title="{Binding Name }" Height="300" Width="300"
+        DataContext="{Binding Arrivals, Source={StaticResource Locator }}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">Flight number</Label>
+        <Label Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">From</Label>
+        <Label Grid.Column="2" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold">Belt</Label>
+        <ListView Grid.Row="1" Grid.ColumnSpan="3" ItemsSource="{Binding BaggageDestinations }">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Label Content="{ Binding FlightNumber }" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Label Content="{ Binding From }" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Label Content="{ Binding Belt }" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Window>
