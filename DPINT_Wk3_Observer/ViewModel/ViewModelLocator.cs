@@ -27,20 +27,17 @@ namespace DPINT_Wk3_Observer.ViewModel
     /// </summary>
     public class ViewModelLocator
     {
-        private List<ArrivalsViewModel> _arrivalsViewModels;
-
         /// <summary>
         /// Initializes a new instance of the ViewModelLocator class.
         /// </summary>
         public ViewModelLocator()
         {
-            _arrivalsViewModels = new List<ArrivalsViewModel>();
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             SimpleIoc.Default.Register<ViewModelLocator>(() => this);
             SimpleIoc.Default.Register<MainViewModel>();
 
-            SimpleIoc.Default.Register<BaggageHandler>(() => new BaggageHandler(), true);
+            SimpleIoc.Default.Register<AankomsthalVerwerker>(() => new AankomsthalVerwerker(), true);
         }
 
         public MainViewModel Main
@@ -51,24 +48,6 @@ namespace DPINT_Wk3_Observer.ViewModel
             }
         }
 
-        public ArrivalsViewModel Arrivals
-        {
-            get
-            {
-                var returnValue = new ArrivalsViewModel();
-                _arrivalsViewModels.Add(returnValue);
-                return returnValue;
-            }
-        }
-
-        public IEnumerable<ArrivalsViewModel> ArrivalsList
-        {
-            get
-            {
-                return _arrivalsViewModels;
-            }
-        }
-        
         public static void Cleanup()
         {
             // TODO Clear the ViewModels

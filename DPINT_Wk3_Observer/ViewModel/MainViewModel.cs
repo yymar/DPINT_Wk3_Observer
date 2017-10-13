@@ -6,6 +6,7 @@ using Microsoft.Practices.ServiceLocation;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Collections.ObjectModel;
 
 namespace DPINT_Wk3_Observer.ViewModel
 {
@@ -24,122 +25,109 @@ namespace DPINT_Wk3_Observer.ViewModel
     public class MainViewModel : ViewModelBase
     {
         #region Properties to bind to
-        private string _name;
-        public string Name
+        private string _nieuweVluchtVanaf;
+        public string NieuweVluchtVanaf
         {
-            get { return _name; }
-            set { _name = value; RaisePropertyChanged("Name"); }
+            get { return _nieuweVluchtVanaf; }
+            set { _nieuweVluchtVanaf = value; RaisePropertyChanged("NieuweVluchtVanaf"); }
         }
 
-        private int? _flightNumberIncoming;
-        public int? FlightNumberIncoming
+        private int _nieuweVluchtAantalKoffers;
+        public int NieuweVluchtAantalKoffers
         {
-            get { return _flightNumberIncoming; }
-            set { _flightNumberIncoming = value; RaisePropertyChanged("FlightNumberIncoming"); }
+            get { return _nieuweVluchtAantalKoffers; }
+            set { _nieuweVluchtAantalKoffers = value; RaisePropertyChanged("NieuweVluchtAantalKoffers"); }
         }
 
-        private string _from;
-        public string From
-        {
-            get { return _from; }
-            set { _from = value; RaisePropertyChanged("From"); }
-        }
+        public VluchtInformatieViewModel Band1 { get; set; }
+        public VluchtInformatieViewModel Band2 { get; set; }
+        public VluchtInformatieViewModel Band3 { get; set; }
+        public RelayCommand NieuweVluchtCommand { get; set; }
+        public RelayCommand AssignVluchtenCommand { get; set; }
+        public RelayCommand VerversBaggagebandenCommand { get; set; }
 
-        private int? _flightNumberBelt;
-        public int? FlightNumberBelt
-        {
-            get { return _flightNumberBelt; }
-            set { _flightNumberBelt = value; RaisePropertyChanged("FlightNumberBelt"); }
-        }
-
-        private int? _beltNumber;
-        public int? BeltNumber
-        {
-            get { return _beltNumber; }
-            set { _beltNumber = value; RaisePropertyChanged("BeltNumber"); }
-        }
-
-        private int? _flightNumberBeltClear;
-        public int? FlightNumberBeltClear
-        {
-            get { return _flightNumberBeltClear; }
-            set { _flightNumberBeltClear = value; RaisePropertyChanged("FlightNumberBeltClear"); }
-        }
-
-        public RelayCommand AddIncomingCommand { get; set; }
-        public RelayCommand AssignBeltCommand { get; set; }
-        public RelayCommand ClearBeltCommand { get; set; }
-        public RelayCommand OpenWindowCommand { get; set; }
-
+        public ObservableCollection<VluchtInformatieViewModel> WachtendeVluchten { get; set; }
         #endregion Properties to bind to
 
-        private BaggageHandler _baggageHandler;
+        private AankomsthalVerwerker _aankomsthalverwerker;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(BaggageHandler handler)
+        public MainViewModel(AankomsthalVerwerker aankomsthalVerwerker)
         {
-            _baggageHandler = handler;
-            OpenWindowCommand = new RelayCommand(OpenWindow);
-            AddIncomingCommand = new RelayCommand(AddIncoming);
-            AssignBeltCommand = new RelayCommand(AssignBelt);
-            ClearBeltCommand = new RelayCommand(ClearBelt);
+            NieuweVluchtCommand = new RelayCommand(AddNieuweVlucht);
+            AssignVluchtenCommand = new RelayCommand(AssignVluchten);
+            VerversBaggagebandenCommand = new RelayCommand(VerversBaggagebanden);
+            WachtendeVluchten = new ObservableCollection<VluchtInformatieViewModel>();
+
+            NieuweVluchtAantalKoffers = 50;
+
+            _aankomsthalverwerker = aankomsthalVerwerker;
+
+            Band1 = new VluchtInformatieViewModel();
+            Band2 = new VluchtInformatieViewModel();
+            Band3 = new VluchtInformatieViewModel();
+
+            InitializeDefaultVluchten();
+            VerversWachtendeVluchten();
         }
 
-        private void OpenWindow()
+        private void InitializeDefaultVluchten()
         {
-            ArrivalsMonitor window = new ArrivalsMonitor();
-            window.Show();
-
-            var locator = ServiceLocator.Current.GetInstance<ViewModelLocator>();
-            locator.ArrivalsList.Last().Name = this.Name;
-            Name = "";
-
-            locator.ArrivalsList.Last().UpdateDestinations(_baggageHandler.BaggageDestinations);
+            _aankomsthalverwerker.NieuweInkomendeVlucht("New York", 70);
+            _aankomsthalverwerker.NieuweInkomendeVlucht("Paris", 23);
+            _aankomsthalverwerker.NieuweInkomendeVlucht("Beijing", 84);
+            _aankomsthalverwerker.NieuweInkomendeVlucht("London", 65);
+            _aankomsthalverwerker.NieuweInkomendeVlucht("Barcelona", 45);
+            _aankomsthalverwerker.NieuweInkomendeVlucht("Sydney", 92);
+            _aankomsthalverwerker.NieuweInkomendeVlucht("Moskow", 14);
+            _aankomsthalverwerker.NieuweInkomendeVlucht("Rio de Janeiro", 98);
+            _aankomsthalverwerker.NieuweInkomendeVlucht("Cape Town", 73);
+            _aankomsthalverwerker.NieuweInkomendeVlucht("Tokyo", 38);
         }
 
-        private void AddIncoming()
+        private void VerversBaggagebanden()
         {
-            if (FlightNumberIncoming.HasValue && !String.IsNullOrWhiteSpace(From))
+            Band1.Update(_aankomsthalverwerker.Baggagebanden[0].HuidigeVlucht);
+            Band2.Update(_aankomsthalverwerker.Baggagebanden[1].HuidigeVlucht);
+            Band3.Update(_aankomsthalverwerker.Baggagebanden[2].HuidigeVlucht);
+        }
+
+        private void AssignVluchten()
+        {
+            _aankomsthalverwerker.WachtendeVluchtenNaarBand();
+            VerversWachtendeVluchten();
+            VerversBaggagebanden();
+        }
+
+        private void VerversWachtendeVluchten()
+        {
+            WachtendeVluchten.Clear();
+            foreach (var vlucht in _aankomsthalverwerker.WachtendeVluchten)
             {
-                _baggageHandler.IncomingFlight(FlightNumberIncoming.Value, From);
-                FlightNumberIncoming = null;
-                From = null;
-
-                UpdateArrivalsViewModels();
+                WachtendeVluchten.Add(new VluchtInformatieViewModel()
+                {
+                    AantalKoffers = vlucht.AantalKoffers,
+                    VertrokkenVanuit = vlucht.VertrokkenVanuit
+                });
             }
         }
 
-        private void AssignBelt()
+        private void AddNieuweVlucht()
         {
-            if (FlightNumberBelt.HasValue && BeltNumber.HasValue)
+            if (!String.IsNullOrWhiteSpace(NieuweVluchtVanaf))
             {
-                _baggageHandler.AssignBelt(FlightNumberBelt.Value, BeltNumber.Value);
-                FlightNumberBelt = null;
-                BeltNumber = null;
+                _aankomsthalverwerker.NieuweInkomendeVlucht(NieuweVluchtVanaf, NieuweVluchtAantalKoffers);
+                
+                WachtendeVluchten.Add(new VluchtInformatieViewModel()
+                {
+                    AantalKoffers = NieuweVluchtAantalKoffers,
+                    VertrokkenVanuit = NieuweVluchtVanaf
+                });
 
-                UpdateArrivalsViewModels();
-            }
-        }
-
-        private void ClearBelt()
-        {
-            if (FlightNumberBeltClear.HasValue)
-            {
-                // TODO: Implement the feature to clear belts.
-                // TIP: BaggageHandler has a function for this.
-
-                MessageBox.Show("This function is not implemented yet");
-            }
-        }
-
-        private void UpdateArrivalsViewModels()
-        {
-            var arrivals = ServiceLocator.Current.GetInstance<ViewModelLocator>().ArrivalsList;
-            foreach (var arrivalViewModel in arrivals)
-            {
-                arrivalViewModel.UpdateDestinations(_baggageHandler.BaggageDestinations);
+                NieuweVluchtAantalKoffers = 50;
+                NieuweVluchtVanaf = null;
             }
         }
     }

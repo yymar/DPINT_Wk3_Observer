@@ -81,12 +81,12 @@
     <Compile Include="ArrivalsMonitor.xaml.cs">
       <DependentUpon>ArrivalsMonitor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\BaggageHandler.cs" />
-    <Compile Include="Model\BaggageDestination.cs" />
-    <Compile Include="ViewModel\ArrivalsViewModel.cs" />
-    <Compile Include="ViewModel\BaggageDestinationViewModel.cs" />
+    <Compile Include="Model\AankomsthalVerwerker.cs" />
+    <Compile Include="Model\BaggageBand.cs" />
+    <Compile Include="Model\Vlucht.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="ViewModel\VluchtInformatieViewModel.cs" />
     <Page Include="ArrivalsMonitor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
