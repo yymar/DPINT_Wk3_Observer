@@ -7,14 +7,16 @@ using System.Windows.Forms;
 
 namespace DPINT_Wk3_Observer.Model
 {
-    public class BaggageBand
+    public class Baggageband
     {
         public string Naam { get; set; }
         private int _aantalKoffersPerMinuut;
-        public Vlucht HuidigeVlucht { get; private set; }
+        public int AantalKoffers { get; set; }
+        public string VluchtVertrokkenVanuit { get; set; }
+
         private Timer _huidigeVluchtTimer;
 
-        public BaggageBand(string naam, int aantalKoffersPerMinuut)
+        public Baggageband(string naam, int aantalKoffersPerMinuut)
         {
             Naam = naam;
             _aantalKoffersPerMinuut = aantalKoffersPerMinuut;
@@ -22,9 +24,10 @@ namespace DPINT_Wk3_Observer.Model
 
         public void HandelNieuweVluchtAf(Vlucht vlucht)
         {
-            HuidigeVlucht = vlucht;
+            VluchtVertrokkenVanuit = vlucht.VertrokkenVanuit;
+            AantalKoffers = vlucht.AantalKoffers;
 
-            if(_huidigeVluchtTimer != null)
+            if (_huidigeVluchtTimer != null)
             {
                 _huidigeVluchtTimer.Stop();
             }
@@ -34,21 +37,21 @@ namespace DPINT_Wk3_Observer.Model
             _huidigeVluchtTimer.Tick += KofferVanBandGehaald;
 
             _huidigeVluchtTimer.Start();
+
+            // TODO: We moeten het laten weten dat we een update hebben!
         }
 
         private void KofferVanBandGehaald(object sender, EventArgs e)
         {
-            HuidigeVlucht.AantalKoffers--;
+            AantalKoffers--;
 
-            if(HuidigeVlucht.AantalKoffers == 0)
+            if(AantalKoffers == 0)
             {
+                VluchtVertrokkenVanuit = null;
                 _huidigeVluchtTimer.Stop();
             }
-        }
 
-        public bool IsEmpty
-        {
-            get { return HuidigeVlucht == null || HuidigeVlucht.AantalKoffers == 0; }
+            // TODO: We moeten het laten weten dat we een update hebben!
         }
     }
 }

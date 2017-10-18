@@ -39,14 +39,14 @@ namespace DPINT_Wk3_Observer.ViewModel
             set { _nieuweVluchtAantalKoffers = value; RaisePropertyChanged("NieuweVluchtAantalKoffers"); }
         }
 
-        public VluchtInformatieViewModel Band1 { get; set; }
-        public VluchtInformatieViewModel Band2 { get; set; }
-        public VluchtInformatieViewModel Band3 { get; set; }
+        public BaggagebandViewModel Band1 { get; set; }
+        public BaggagebandViewModel Band2 { get; set; }
+        public BaggagebandViewModel Band3 { get; set; }
         public RelayCommand NieuweVluchtCommand { get; set; }
         public RelayCommand AssignVluchtenCommand { get; set; }
         public RelayCommand VerversBaggagebandenCommand { get; set; }
 
-        public ObservableCollection<VluchtInformatieViewModel> WachtendeVluchten { get; set; }
+        public ObservableCollection<VluchtViewModel> WachtendeVluchten { get; set; }
         #endregion Properties to bind to
 
         private Aankomsthal _aankomsthal;
@@ -59,59 +59,69 @@ namespace DPINT_Wk3_Observer.ViewModel
             NieuweVluchtCommand = new RelayCommand(AddNieuweVlucht);
             AssignVluchtenCommand = new RelayCommand(AssignVluchten);
             VerversBaggagebandenCommand = new RelayCommand(VerversBaggagebanden);
-            WachtendeVluchten = new ObservableCollection<VluchtInformatieViewModel>();
+            WachtendeVluchten = new ObservableCollection<VluchtViewModel>();
 
-            NieuweVluchtAantalKoffers = 50;
+            NieuweVluchtAantalKoffers = 5;
 
             _aankomsthal = aankomsthal;
 
-            Band1 = new VluchtInformatieViewModel();
-            Band2 = new VluchtInformatieViewModel();
-            Band3 = new VluchtInformatieViewModel();
+            Band1 = new BaggagebandViewModel(_aankomsthal.Baggagebanden[0]);
+            Band2 = new BaggagebandViewModel(_aankomsthal.Baggagebanden[1]);
+            Band3 = new BaggagebandViewModel(_aankomsthal.Baggagebanden[2]);
 
             InitializeDefaultVluchten();
-            VerversWachtendeVluchten();
+            VerversWachtendeVluchten(); 
+            // TODO: Hier kijken naar _aankomsthal.WachtendeVluchten.CollectionChanged en verversWachtendeVluchten weghalen.
         }
 
         private void InitializeDefaultVluchten()
         {
-            _aankomsthal.NieuweInkomendeVlucht("New York", 70);
-            _aankomsthal.NieuweInkomendeVlucht("Paris", 23);
-            _aankomsthal.NieuweInkomendeVlucht("Beijing", 84);
-            _aankomsthal.NieuweInkomendeVlucht("London", 65);
-            _aankomsthal.NieuweInkomendeVlucht("Barcelona", 45);
-            _aankomsthal.NieuweInkomendeVlucht("Sydney", 92);
-            _aankomsthal.NieuweInkomendeVlucht("Moskow", 14);
-            _aankomsthal.NieuweInkomendeVlucht("Rio de Janeiro", 98);
-            _aankomsthal.NieuweInkomendeVlucht("Cape Town", 73);
-            _aankomsthal.NieuweInkomendeVlucht("Tokyo", 38);
+            _aankomsthal.NieuweInkomendeVlucht("New York", 7);
+            _aankomsthal.NieuweInkomendeVlucht("Paris", 2);
+            _aankomsthal.NieuweInkomendeVlucht("Beijing", 8);
+            _aankomsthal.NieuweInkomendeVlucht("London", 6);
+            _aankomsthal.NieuweInkomendeVlucht("Barcelona", 4);
+            _aankomsthal.NieuweInkomendeVlucht("Sydney", 9);
+            _aankomsthal.NieuweInkomendeVlucht("Moskow", 1);
+            _aankomsthal.NieuweInkomendeVlucht("Rio de Janeiro", 9);
+            _aankomsthal.NieuweInkomendeVlucht("Cape Town", 7);
+            _aankomsthal.NieuweInkomendeVlucht("Tokyo", 3);
         }
         
         private void AssignVluchten()
         {
             _aankomsthal.WachtendeVluchtenNaarBand();
-            VerversWachtendeVluchten();
-            VerversBaggagebanden();
+            VerversWachtendeVluchten(); // TODO: Dit gaat straks vanzelf, kan hier dus weg.
+            VerversBaggagebanden();     // TODO: Dit gaat straks vanzelf, kan hier dus weg.
         }
 
         private void VerversWachtendeVluchten()
         {
+            // TODO: Deze methode is niet meer nodig als we naar een ObservableCollection kunnen kijken.
+            // Code snippet bij CollectionChanged:
+            /*
+             * if(e.Action == NotifyCollectionChangedAction.Add)
+             * {
+             *     WachtendeVluchten.Add(new VluchtViewModel(e.NewItems[0] as Vlucht));
+             * } else if(e.Action == NotifyCollectionChangedAction.Remove)
+             * {
+             *     WachtendeVluchten.RemoveAt(e.OldStartingIndex);
+             * }
+            */
+
             WachtendeVluchten.Clear();
             foreach (var vlucht in _aankomsthal.WachtendeVluchten)
             {
-                WachtendeVluchten.Add(new VluchtInformatieViewModel()
-                {
-                    AantalKoffers = vlucht.AantalKoffers,
-                    VertrokkenVanuit = vlucht.VertrokkenVanuit
-                });
+                WachtendeVluchten.Add(new VluchtViewModel(vlucht));
             }
         }
 
         private void VerversBaggagebanden()
         {
-            Band1.Update(_aankomsthal.Baggagebanden[0].HuidigeVlucht);
-            Band2.Update(_aankomsthal.Baggagebanden[1].HuidigeVlucht);
-            Band3.Update(_aankomsthal.Baggagebanden[2].HuidigeVlucht);
+            // TODO: Dit gaat straks vanzelf, deze hele methode kan dus weg.
+            Band1.Update(_aankomsthal.Baggagebanden[0]);
+            Band2.Update(_aankomsthal.Baggagebanden[1]);
+            Band3.Update(_aankomsthal.Baggagebanden[2]);
         }
 
         private void AddNieuweVlucht()
@@ -119,16 +129,14 @@ namespace DPINT_Wk3_Observer.ViewModel
             if (!String.IsNullOrWhiteSpace(NieuweVluchtVanaf))
             {
                 _aankomsthal.NieuweInkomendeVlucht(NieuweVluchtVanaf, NieuweVluchtAantalKoffers);
-                
-                WachtendeVluchten.Add(new VluchtInformatieViewModel()
-                {
-                    AantalKoffers = NieuweVluchtAantalKoffers,
-                    VertrokkenVanuit = NieuweVluchtVanaf
-                });
 
-                NieuweVluchtAantalKoffers = 50;
+                // TODO: Dit gaat straks vanzelf, kan hier dus weg.
+                WachtendeVluchten.Add(new VluchtViewModel(new Vlucht(NieuweVluchtVanaf, NieuweVluchtAantalKoffers)));
+
+                NieuweVluchtAantalKoffers = 5;
                 NieuweVluchtVanaf = null;
             }
         }
     }
 }
+ 
