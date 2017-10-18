@@ -37,7 +37,7 @@ namespace DPINT_Wk3_Observer.ViewModel
             SimpleIoc.Default.Register<ViewModelLocator>(() => this);
             SimpleIoc.Default.Register<MainViewModel>();
 
-            SimpleIoc.Default.Register<AankomsthalVerwerker>(() => new AankomsthalVerwerker(), true);
+            SimpleIoc.Default.Register<Aankomsthal>(() => new Aankomsthal(), true);
         }
 
         public MainViewModel Main

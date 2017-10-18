@@ -81,7 +81,7 @@
     <Compile Include="ArrivalsMonitor.xaml.cs">
       <DependentUpon>ArrivalsMonitor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\AankomsthalVerwerker.cs" />
+    <Compile Include="Model\Aankomsthal.cs" />
     <Compile Include="Model\BaggageBand.cs" />
     <Compile Include="Model\Vlucht.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

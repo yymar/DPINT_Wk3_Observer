@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DPINT_Wk3_Observer.Model
 {
-    public class AankomsthalVerwerker
+    public class Aankomsthal
     {
         private Queue<Vlucht> _wachtendeVluchten;
         public IEnumerable<Vlucht> WachtendeVluchten { get { return _wachtendeVluchten; } }
@@ -15,7 +15,7 @@ namespace DPINT_Wk3_Observer.Model
         private List<BaggageBand> _baggagebanden;
         public IList<BaggageBand> Baggagebanden { get { return _baggagebanden; } }
 
-        public AankomsthalVerwerker()
+        public Aankomsthal()
         {
             _wachtendeVluchten = new Queue<Vlucht>();
             _baggagebanden = new List<BaggageBand>();

@@ -49,12 +49,12 @@ namespace DPINT_Wk3_Observer.ViewModel
         public ObservableCollection<VluchtInformatieViewModel> WachtendeVluchten { get; set; }
         #endregion Properties to bind to
 
-        private AankomsthalVerwerker _aankomsthalverwerker;
+        private Aankomsthal _aankomsthal;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(AankomsthalVerwerker aankomsthalVerwerker)
+        public MainViewModel(Aankomsthal aankomsthal)
         {
             NieuweVluchtCommand = new RelayCommand(AddNieuweVlucht);
             AssignVluchtenCommand = new RelayCommand(AssignVluchten);
@@ -63,7 +63,7 @@ namespace DPINT_Wk3_Observer.ViewModel
 
             NieuweVluchtAantalKoffers = 50;
 
-            _aankomsthalverwerker = aankomsthalVerwerker;
+            _aankomsthal = aankomsthal;
 
             Band1 = new VluchtInformatieViewModel();
             Band2 = new VluchtInformatieViewModel();
@@ -75,28 +75,21 @@ namespace DPINT_Wk3_Observer.ViewModel
 
         private void InitializeDefaultVluchten()
         {
-            _aankomsthalverwerker.NieuweInkomendeVlucht("New York", 70);
-            _aankomsthalverwerker.NieuweInkomendeVlucht("Paris", 23);
-            _aankomsthalverwerker.NieuweInkomendeVlucht("Beijing", 84);
-            _aankomsthalverwerker.NieuweInkomendeVlucht("London", 65);
-            _aankomsthalverwerker.NieuweInkomendeVlucht("Barcelona", 45);
-            _aankomsthalverwerker.NieuweInkomendeVlucht("Sydney", 92);
-            _aankomsthalverwerker.NieuweInkomendeVlucht("Moskow", 14);
-            _aankomsthalverwerker.NieuweInkomendeVlucht("Rio de Janeiro", 98);
-            _aankomsthalverwerker.NieuweInkomendeVlucht("Cape Town", 73);
-            _aankomsthalverwerker.NieuweInkomendeVlucht("Tokyo", 38);
+            _aankomsthal.NieuweInkomendeVlucht("New York", 70);
+            _aankomsthal.NieuweInkomendeVlucht("Paris", 23);
+            _aankomsthal.NieuweInkomendeVlucht("Beijing", 84);
+            _aankomsthal.NieuweInkomendeVlucht("London", 65);
+            _aankomsthal.NieuweInkomendeVlucht("Barcelona", 45);
+            _aankomsthal.NieuweInkomendeVlucht("Sydney", 92);
+            _aankomsthal.NieuweInkomendeVlucht("Moskow", 14);
+            _aankomsthal.NieuweInkomendeVlucht("Rio de Janeiro", 98);
+            _aankomsthal.NieuweInkomendeVlucht("Cape Town", 73);
+            _aankomsthal.NieuweInkomendeVlucht("Tokyo", 38);
         }
-
-        private void VerversBaggagebanden()
-        {
-            Band1.Update(_aankomsthalverwerker.Baggagebanden[0].HuidigeVlucht);
-            Band2.Update(_aankomsthalverwerker.Baggagebanden[1].HuidigeVlucht);
-            Band3.Update(_aankomsthalverwerker.Baggagebanden[2].HuidigeVlucht);
-        }
-
+        
         private void AssignVluchten()
         {
-            _aankomsthalverwerker.WachtendeVluchtenNaarBand();
+            _aankomsthal.WachtendeVluchtenNaarBand();
             VerversWachtendeVluchten();
             VerversBaggagebanden();
         }
@@ -104,7 +97,7 @@ namespace DPINT_Wk3_Observer.ViewModel
         private void VerversWachtendeVluchten()
         {
             WachtendeVluchten.Clear();
-            foreach (var vlucht in _aankomsthalverwerker.WachtendeVluchten)
+            foreach (var vlucht in _aankomsthal.WachtendeVluchten)
             {
                 WachtendeVluchten.Add(new VluchtInformatieViewModel()
                 {
@@ -114,11 +107,18 @@ namespace DPINT_Wk3_Observer.ViewModel
             }
         }
 
+        private void VerversBaggagebanden()
+        {
+            Band1.Update(_aankomsthal.Baggagebanden[0].HuidigeVlucht);
+            Band2.Update(_aankomsthal.Baggagebanden[1].HuidigeVlucht);
+            Band3.Update(_aankomsthal.Baggagebanden[2].HuidigeVlucht);
+        }
+
         private void AddNieuweVlucht()
         {
             if (!String.IsNullOrWhiteSpace(NieuweVluchtVanaf))
             {
-                _aankomsthalverwerker.NieuweInkomendeVlucht(NieuweVluchtVanaf, NieuweVluchtAantalKoffers);
+                _aankomsthal.NieuweInkomendeVlucht(NieuweVluchtVanaf, NieuweVluchtAantalKoffers);
                 
                 WachtendeVluchten.Add(new VluchtInformatieViewModel()
                 {
