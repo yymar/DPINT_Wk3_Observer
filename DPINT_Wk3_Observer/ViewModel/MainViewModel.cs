@@ -64,6 +64,7 @@ namespace DPINT_Wk3_Observer.ViewModel
             NieuweVluchtAantalKoffers = 5;
 
             _aankomsthal = aankomsthal;
+            // TODO: Hier kijken naar _aankomsthal.WachtendeVluchten.CollectionChanged en verversWachtendeVluchten weghalen.
 
             Band1 = new BaggagebandViewModel(_aankomsthal.Baggagebanden[0]);
             Band2 = new BaggagebandViewModel(_aankomsthal.Baggagebanden[1]);
@@ -71,7 +72,6 @@ namespace DPINT_Wk3_Observer.ViewModel
 
             InitializeDefaultVluchten();
             VerversWachtendeVluchten(); 
-            // TODO: Hier kijken naar _aankomsthal.WachtendeVluchten.CollectionChanged en verversWachtendeVluchten weghalen.
         }
 
         private void InitializeDefaultVluchten()
