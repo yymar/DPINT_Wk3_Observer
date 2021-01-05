@@ -1,14 +1,10 @@
 ﻿using DPINT_Wk3_Observer.Model;
 using GalaSoft.MvvmLight;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DPINT_Wk3_Observer.ViewModel
 {
-    public class BaggagebandViewModel : ViewModelBase
+    public class BaggagebandViewModel : ViewModelBase, IObserver<Baggageband>
     {
         private string _vluchtVertrokkenVanuit;
         public string VluchtVertrokkenVanuit
@@ -33,7 +29,8 @@ namespace DPINT_Wk3_Observer.ViewModel
 
         public BaggagebandViewModel(Baggageband band)
         {
-            Update(band);
+            band.Subscribe(this);
+            OnNext(band);
         }
 
         public void Update(Baggageband value)
@@ -41,6 +38,21 @@ namespace DPINT_Wk3_Observer.ViewModel
             VluchtVertrokkenVanuit = value.VluchtVertrokkenVanuit;
             AantalKoffers = value.AantalKoffers;
             Naam = value.Naam;
+        }
+
+        public void OnNext(Baggageband value)
+        {
+            Update(value);
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

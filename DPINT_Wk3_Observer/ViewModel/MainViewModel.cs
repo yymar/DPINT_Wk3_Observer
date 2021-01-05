@@ -2,11 +2,8 @@ using System;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using DPINT_Wk3_Observer.Model;
-using Microsoft.Practices.ServiceLocation;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace DPINT_Wk3_Observer.ViewModel
 {
@@ -65,13 +62,26 @@ namespace DPINT_Wk3_Observer.ViewModel
 
             _aankomsthal = aankomsthal;
             // TODO: Hier kijken naar _aankomsthal.WachtendeVluchten.CollectionChanged en verversWachtendeVluchten weghalen.
+            _aankomsthal.WachtendeVluchten.CollectionChanged += WachtendeVluchten_CollectionChanged; 
 
             Band1 = new BaggagebandViewModel(_aankomsthal.Baggagebanden[0]);
             Band2 = new BaggagebandViewModel(_aankomsthal.Baggagebanden[1]);
             Band3 = new BaggagebandViewModel(_aankomsthal.Baggagebanden[2]);
 
             InitializeDefaultVluchten();
-            VerversWachtendeVluchten(); 
+            //VerversWachtendeVluchten(); 
+        }
+
+        private void WachtendeVluchten_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                WachtendeVluchten.Add(new VluchtViewModel(e.NewItems[0] as Vlucht));
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                WachtendeVluchten.RemoveAt(e.OldStartingIndex);
+            }
         }
 
         private void InitializeDefaultVluchten()
@@ -87,12 +97,16 @@ namespace DPINT_Wk3_Observer.ViewModel
             _aankomsthal.NieuweInkomendeVlucht("Cape Town", 7);
             _aankomsthal.NieuweInkomendeVlucht("Tokyo", 3);
         }
-        
+
         private void AssignVluchten()
         {
-            _aankomsthal.WachtendeVluchtenNaarBand();
-            VerversWachtendeVluchten(); // TODO: Dit gaat straks vanzelf, kan hier dus weg.
-            VerversBaggagebanden();     // TODO: Dit gaat straks vanzelf, kan hier dus weg.
+            foreach (Baggageband b in _aankomsthal.Baggagebanden)
+            {
+                _aankomsthal.WachtendeVluchtenNaarBand(b);
+            }
+            //_aankomsthal.WachtendeVluchtenNaarBand();
+            //VerversWachtendeVluchten(); // TODO: Dit gaat straks vanzelf, kan hier dus weg.
+            //VerversBaggagebanden();     // TODO: Dit gaat straks vanzelf, kan hier dus weg.
         }
 
         private void VerversWachtendeVluchten()
@@ -119,9 +133,9 @@ namespace DPINT_Wk3_Observer.ViewModel
         private void VerversBaggagebanden()
         {
             // TODO: Dit gaat straks vanzelf, deze hele methode kan dus weg.
-            Band1.Update(_aankomsthal.Baggagebanden[0]);
-            Band2.Update(_aankomsthal.Baggagebanden[1]);
-            Band3.Update(_aankomsthal.Baggagebanden[2]);
+            //Band1.Update(_aankomsthal.Baggagebanden[0]);
+            //Band2.Update(_aankomsthal.Baggagebanden[1]);
+            //Band3.Update(_aankomsthal.Baggagebanden[2]);
         }
 
         private void AddNieuweVlucht()
@@ -131,7 +145,7 @@ namespace DPINT_Wk3_Observer.ViewModel
                 _aankomsthal.NieuweInkomendeVlucht(NieuweVluchtVanaf, NieuweVluchtAantalKoffers);
 
                 // TODO: Dit gaat straks vanzelf, kan hier dus weg.
-                WachtendeVluchten.Add(new VluchtViewModel(new Vlucht(NieuweVluchtVanaf, NieuweVluchtAantalKoffers)));
+                //WachtendeVluchten.Add(new VluchtViewModel(new Vlucht(NieuweVluchtVanaf, NieuweVluchtAantalKoffers)));
 
                 NieuweVluchtAantalKoffers = 5;
                 NieuweVluchtVanaf = null;
@@ -139,4 +153,3 @@ namespace DPINT_Wk3_Observer.ViewModel
         }
     }
 }
- 
