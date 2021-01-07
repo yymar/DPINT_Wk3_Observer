@@ -13,7 +13,6 @@ namespace DPINT_Wk3_Observer.Model
         // TODO: Hier een ObservableCollection van maken, dan weten we wanneer er vluchten bij de wachtrij bij komen of afgaan.
         public ObservableCollection<Vlucht> WachtendeVluchten { get; private set; }
         public List<Baggageband> Baggagebanden { get; private set; }
-
         public Aankomsthal()
         {
             WachtendeVluchten = new ObservableCollection<Vlucht>();
@@ -36,6 +35,7 @@ namespace DPINT_Wk3_Observer.Model
 
             // Denk bijvoorbeeld aan: Baggageband legeBand = Baggagebanden.FirstOrDefault(b => b.AantalKoffers == 0);
             Baggageband legeBand = Baggagebanden.FirstOrDefault(b => b.AantalKoffers == 0);
+
             if (legeBand != null)
             {
                 legeBand.HandelNieuweVluchtAf(new Vlucht(vertrokkenVanuit, aantalKoffers));
@@ -56,23 +56,21 @@ namespace DPINT_Wk3_Observer.Model
             {
                 Baggageband legeBand = Baggagebanden.FirstOrDefault(bb => bb.AantalKoffers == 0);
                 Vlucht volgendeVlucht = WachtendeVluchten.FirstOrDefault();
+                volgendeVlucht.StopWaiting();
                 WachtendeVluchten.RemoveAt(0);
-
                 legeBand.HandelNieuweVluchtAf(volgendeVlucht);
             }
             //}
         }
 
-        public void OnNext(Baggageband value)
+        public void OnNext(Baggageband volgendeVlucht)
         {
-            WachtendeVluchtenNaarBand(value);
+            WachtendeVluchtenNaarBand(volgendeVlucht);
         }
-
         public void OnError(Exception error)
         {
             throw new NotImplementedException();
         }
-
         public void OnCompleted()
         {
             throw new NotImplementedException();
